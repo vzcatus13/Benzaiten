@@ -43,6 +43,15 @@ const ScrollableCarousel = ({
     }
   }, []);
 
+  useEffect(() => {
+    if (scrollableContainerRef.current) {
+      if (scrollableContainerRef.current.scrollWidth <= dimensions.width) {
+        setLeftButtonVisibility(false);
+        setRightButtonVisibility(false);
+      }
+    }
+  }, [dimensions]);
+
   const onScroll = (e) => {
     const { scrollLeft, scrollWidth, offsetWidth } = e.target;
     if (scrollLeft > 0) {

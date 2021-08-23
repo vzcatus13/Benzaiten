@@ -1,6 +1,9 @@
 import styled, { css } from "styled-components";
 
 export const ScrollableWrapper = styled.div`
+  /* This can fix problem, when there is few items in list,
+  but wrapper is block, so wrapper is bigger than actual list
+  display: inline-grid; */
   position: relative;
 `;
 
