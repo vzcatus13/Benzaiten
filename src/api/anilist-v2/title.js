@@ -16,6 +16,23 @@ export const GET_TITLE_BY_ID = gql`
       bannerImage
       genres
       averageScore
+      recommendations(perPage: 13, sort: RATING_DESC) {
+        nodes {
+          mediaRecommendation {
+            id
+            title {
+              romaji
+            }
+
+            coverImage {
+              large
+            }
+          }
+        }
+        pageInfo {
+          total
+        }
+      }
     }
   }
 `;
