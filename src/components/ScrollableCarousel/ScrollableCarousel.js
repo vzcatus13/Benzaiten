@@ -18,6 +18,8 @@ const ScrollableCarousel = ({
   buttonZIndex,
   hideButtons,
   disableScroll,
+  CustomButtonLeft,
+  CustomButtonRight,
 }) => {
   const scrollableContainerRef = useRef();
 
@@ -80,7 +82,7 @@ const ScrollableCarousel = ({
   return (
     <ScrollableWrapper>
       {!hideButtons && (
-        <ButtonLeft
+        <CustomButtonLeft
           top={dimensions.height / 2 - buttonSize * 2}
           $size={buttonSize}
           color={buttonColor}
@@ -95,11 +97,11 @@ const ScrollableCarousel = ({
           <NavigateBefore
             style={{ height: `${buttonSize}px`, width: `${buttonSize}` }}
           />
-        </ButtonLeft>
+        </CustomButtonLeft>
       )}
 
       {!hideButtons && (
-        <ButtonRight
+        <CustomButtonRight
           top={dimensions.height / 2 - buttonSize * 2}
           $size={buttonSize}
           color={buttonColor}
@@ -113,7 +115,7 @@ const ScrollableCarousel = ({
           <NavigateNext
             style={{ height: `${buttonSize}px`, width: `${buttonSize}` }}
           />
-        </ButtonRight>
+        </CustomButtonRight>
       )}
 
       <ScrollableContainer
@@ -130,6 +132,8 @@ const ScrollableCarousel = ({
 ScrollableCarousel.defaultProps = {
   buttonSize: 24,
   buttonZIndex: 666,
+  CustomButtonLeft: ButtonLeft,
+  CustomButtonRight: ButtonRight,
 };
 
 export default ScrollableCarousel;
