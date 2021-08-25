@@ -125,6 +125,8 @@ const LeadingInfo = ({ data, loading }) => {
           >
             <RecommendationList>
               {data.Media.recommendations.nodes.map((element) => {
+                if (!element.mediaRecommendation) return null;
+
                 const [id, title, imgSrc] = [
                   element.mediaRecommendation.id,
                   element.mediaRecommendation.title.romaji,
