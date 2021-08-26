@@ -18,6 +18,7 @@ const ScrollableCarousel = ({
   buttonZIndex,
   hideButtons,
   disableScroll,
+  onScroll,
   CustomButtonLeft,
   CustomButtonRight,
 }) => {
@@ -52,7 +53,7 @@ const ScrollableCarousel = ({
     }
   }, [dimensions]);
 
-  const onScroll = (e) => {
+  const handleScroll = (e) => {
     const { scrollLeft, scrollWidth, offsetWidth } = e.target;
     if (scrollLeft > 0) {
       setLeftButtonVisibility(true);
@@ -68,6 +69,8 @@ const ScrollableCarousel = ({
     } else {
       setRightButtonVisibility(false);
     }
+
+    onScroll instanceof Function && onScroll(e);
   };
 
   const scrollLeft = (e) => {
@@ -128,7 +131,7 @@ const ScrollableCarousel = ({
       )}
 
       <ScrollableContainer
-        onScroll={onScroll}
+        onScroll={handleScroll}
         ref={scrollableContainerRef}
         disableScroll={disableScroll}
       >
