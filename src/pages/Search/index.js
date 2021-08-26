@@ -3,7 +3,7 @@ import SearchBar from "./SearchBar";
 
 import { Container } from "./Search.styled.js";
 import TitleList from "./TitleList";
-import { QUERY_TITLES } from "../../api/anilist-v2/listTitles";
+import { QUERY_TITLES } from "../../api/anilist-v2";
 import { useLazyQuery } from "@apollo/client";
 import { useHistory } from "react-router-dom";
 import { useQueryParams } from "../../hooks/router";

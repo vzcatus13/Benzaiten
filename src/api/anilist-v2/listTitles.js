@@ -56,3 +56,26 @@ export const QUERY_TITLES = gql`
     }
   }
 `;
+
+export const GET_RECOMMENDATIONS_BY_ID = gql`
+  query getRecommendationsById($id: Int!, $perPage: Int!, $page: Int!) {
+    Page(perPage: $perPage, page: $page) {
+      recommendations(mediaId: $id, sort: RATING_DESC) {
+        mediaRecommendation {
+          id
+          title {
+            romaji
+          }
+          coverImage {
+            large
+          }
+        }
+      }
+
+      pageInfo {
+        total
+        hasNextPage
+      }
+    }
+  }
+`;

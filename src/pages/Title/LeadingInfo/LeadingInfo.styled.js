@@ -1,9 +1,5 @@
 import { Button } from "@material-ui/core";
 import styled, { css } from "styled-components";
-import {
-  ButtonLeft,
-  ButtonRight,
-} from "../../../components/ScrollableCarousel/ScrollableCarousel.styled";
 
 export const Container = styled.div`
   margin: 0 50px;
@@ -149,31 +145,4 @@ export const ButtonLinkOutside = styled(Button)`
   &.MuiButton-root {
     padding: 6px 10px;
   }
-`;
-
-export const RecommendationsWrapper = styled.div`
-  margin: 30px 50px;
-
-  @media screen and (max-width: 767px) {
-    margin: 20px 25px;
-  }
-`;
-
-export const RecommendationTitle = styled.div`
-  font-size: 18px;
-  line-height: 22px;
-  font-weight: 500;
-  margin-bottom: 6px;
-`;
-
-export const RecommendationList = styled.div`
-  display: flex;
-`;
-
-export const sQButtonLeft = styled(ButtonLeft)`
-  left: ${(props) => `${props.$size / 2}px`};
-`;
-
-export const sQButtonRight = styled(ButtonRight)`
-  right: ${(props) => `${props.$size / 2}px`};
 `;

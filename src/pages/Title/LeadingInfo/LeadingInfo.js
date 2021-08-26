@@ -18,15 +18,7 @@ import {
   Titles,
   ButtonLinkOutside,
   ButtonsWrapper,
-  RecommendationsWrapper,
-  RecommendationTitle,
-  RecommendationList,
-  sQButtonLeft,
-  sQButtonRight,
 } from "./LeadingInfo.styled";
-
-import ScrollableCarousel from "../../../components/ScrollableCarousel";
-import { TitleCard } from "../../../components/TitleCard";
 
 const LeadingInfo = ({ data, loading }) => {
   let titles, title;
@@ -53,7 +45,6 @@ const LeadingInfo = ({ data, loading }) => {
   }
 
   return (
-    <>
       <Container>
         <PosterWrapper>
           <Poster>
@@ -114,34 +105,6 @@ const LeadingInfo = ({ data, loading }) => {
           )}
         </InfoSection>
       </Container>
-
-      {data && data.Media.recommendations.nodes.length !== 0 && (
-        <RecommendationsWrapper>
-          <RecommendationTitle>Recommended</RecommendationTitle>
-          <ScrollableCarousel
-            CustomButtonLeft={sQButtonLeft}
-            CustomButtonRight={sQButtonRight}
-            hideButtons={isMobileOnly}
-          >
-            <RecommendationList>
-              {data.Media.recommendations.nodes.map((element) => {
-                if (!element.mediaRecommendation) return null;
-
-                const [id, title, imgSrc] = [
-                  element.mediaRecommendation.id,
-                  element.mediaRecommendation.title.romaji,
-                  element.mediaRecommendation.coverImage.large,
-                ];
-
-                return (
-                  <TitleCard key={id} id={id} title={title} imgSrc={imgSrc} />
-                );
-              })}
-            </RecommendationList>
-          </ScrollableCarousel>
-        </RecommendationsWrapper>
-      )}
-    </>
   );
 };
 

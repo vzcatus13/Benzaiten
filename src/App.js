@@ -15,6 +15,7 @@ import Title from "./pages/Title";
 import Search from "./pages/Search";
 import PageNotFound from "./pages/404";
 import { useDarkMode } from "./hooks";
+import ScrollToTopOnPathname from "./components/RouterUtils/ScrollToTopOnPathname";
 
 const App = () => {
   const { isDarkMode, toggle } = useDarkMode(false);
@@ -24,6 +25,7 @@ const App = () => {
       <ThemeProvider theme={isDarkMode ? theme.dark : theme.light}>
         <GlobalStyle />
         <ApolloProvider client={client}>
+        <ScrollToTopOnPathname />
           <Header darkModeToggler={toggle} />
           <Switch>
             <Route exact path="/" component={Home} />

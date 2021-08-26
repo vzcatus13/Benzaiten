@@ -1,14 +1,18 @@
 import { useQuery } from "@apollo/client";
 import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 
 import Banner from "./Banner";
 import LeadingInfo from "./LeadingInfo";
+import Recommendations from "./Recommendations";
 
 import NotFoundPage from "../404";
 
-import { GET_TITLE_BY_ID } from "../../api/anilist-v2";
-import { useEffect } from "react";
-import ScrollToTopOnMount from "../../components/RouterUtils/ScrollToTopOnMount";
+import {
+  GET_TITLE_BY_ID,
+  GET_RECOMMENDATIONS_BY_ID,
+} from "../../api/anilist-v2";
+
 
 const Title = () => {
   const { id } = useParams();
@@ -26,15 +30,19 @@ const Title = () => {
     variables: { id: id },
   });
 
+  const titleRecommendations = useQuery(GET_RECOMMENDATIONS_BY_ID, {
+    variables: { id: id, perPage: 13, page: 1 },
+  });
+
   if (titleInfo.error && titleInfo.error.graphQLErrors[0].status === 404) {
     return <NotFoundPage />;
   }
 
   return (
     <>
-      <ScrollToTopOnMount />
       <Banner data={titleInfo.data} loading={titleInfo.loading} />
       <LeadingInfo data={titleInfo.data} loading={titleInfo.loading} />
+      <Recommendations data={titleRecommendations.data} />
     </>
   );
 };
