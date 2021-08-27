@@ -22,7 +22,7 @@ const Recommendations = ({ data }) => {
       <ScrollableCarousel
         CustomButtonLeft={sQButtonLeft}
         CustomButtonRight={sQButtonRight}
-        hideButtons={isMobileOnly && !data}
+        hideButtons={isMobileOnly || !data}
         disableScroll={!data}
       >
         <List>
