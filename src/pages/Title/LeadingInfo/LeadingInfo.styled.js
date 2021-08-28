@@ -33,7 +33,7 @@ export const Poster = styled.div`
   margin-bottom: 20px;
 
   img {
-    display: block;
+    display: ${(props) => (props.$loading ? "none" : "block")};
     border-radius: inherit;
     width: 100%;
     height: 100%;
