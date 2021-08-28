@@ -13,7 +13,6 @@ import {
   GET_RECOMMENDATIONS_BY_ID,
 } from "../../api/anilist-v2";
 
-
 const Title = () => {
   const { id } = useParams();
 
@@ -42,7 +41,7 @@ const Title = () => {
     <>
       <Banner data={titleInfo.data} loading={titleInfo.loading} />
       <LeadingInfo data={titleInfo.data} loading={titleInfo.loading} />
-      <Recommendations data={titleRecommendations.data} />
+      <Recommendations data={titleRecommendations.data} key={id} />
     </>
   );
 };
