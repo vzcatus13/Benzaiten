@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { Fragment } from "react";
 
 import Banner from "./Banner";
 import LeadingInfo from "./LeadingInfo";
@@ -38,11 +39,11 @@ const Title = () => {
   }
 
   return (
-    <>
+    <Fragment key={id}>
       <Banner data={titleInfo.data} loading={titleInfo.loading} />
       <LeadingInfo data={titleInfo.data} loading={titleInfo.loading} />
-      <Recommendations data={titleRecommendations.data} key={id} />
-    </>
+      <Recommendations data={titleRecommendations.data} />
+    </Fragment>
   );
 };
 
