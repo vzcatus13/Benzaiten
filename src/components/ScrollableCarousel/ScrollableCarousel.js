@@ -24,47 +24,65 @@ const ScrollableCarousel = ({
 }) => {
   const scrollableContainerRef = useRef();
 
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [dimensions, setDimensions] = useState({
+    width: 0,
+    scrollWidth: 0,
+    height: 0,
+  });
 
   const [leftButtonVisibility, setLeftButtonVisibility] = useState(false);
   const [rightButtonVisibility, setRightButtonVisibility] = useState(true);
 
+  const isEnd = (width, scrollWidth, scrollLeft) =>
+    Math.round(scrollWidth) - Math.round(scrollLeft) <= Math.round(width);
+
   useEffect(() => {
-    if (scrollableContainerRef.current) {
-      const dimensionsObserver = new ResizeObserver((entries) => {
-        setDimensions({
-          width: entries[0].target.offsetWidth,
-          height: entries[0].target.offsetHeight,
-        });
+    const ref = scrollableContainerRef.current;
+    if (ref) {
+      setDimensions({
+        width: ref.offsetWidth,
+        scrollWidth: ref.scrollWidth,
+        height: ref.offsetHeight,
       });
-
-      dimensionsObserver.observe(scrollableContainerRef.current);
-
-      return () => dimensionsObserver.disconnect();
     }
-  }, []);
+  }, [children]);
 
   useEffect(() => {
+    if (dimensions.scrollWidth <= dimensions.width) {
+      setLeftButtonVisibility(false);
+      setRightButtonVisibility(false);
+    }
+
+    if (dimensions.scrollWidth > dimensions.width) {
+      setRightButtonVisibility(true);
+    }
+
     if (scrollableContainerRef.current) {
-      if (scrollableContainerRef.current.scrollWidth <= dimensions.width) {
-        setLeftButtonVisibility(false);
+      if (
+        isEnd(
+          dimensions.width,
+          dimensions.scrollWidth,
+          scrollableContainerRef.current.scrollLeft
+        )
+      ) {
         setRightButtonVisibility(false);
+      }
+
+      if (scrollableContainerRef.current.scrollLeft > 0) {
+        setLeftButtonVisibility(true);
       }
     }
   }, [dimensions]);
 
   const handleScroll = (e) => {
-    const { scrollLeft, scrollWidth, offsetWidth } = e.target;
+    const { scrollLeft } = e.target;
     if (scrollLeft > 0) {
       setLeftButtonVisibility(true);
     } else {
       setLeftButtonVisibility(false);
     }
 
-    if (
-      Math.round(scrollWidth) - Math.round(scrollLeft) >
-      Math.round(offsetWidth)
-    ) {
+    if (!isEnd(dimensions.width, dimensions.scrollWidth, scrollLeft)) {
       setRightButtonVisibility(true);
     } else {
       setRightButtonVisibility(false);
@@ -79,6 +97,9 @@ const ScrollableCarousel = ({
         left: -dimensions.width,
         behavior: "smooth",
       });
+
+      scrollableContainerRef.current.scrollLeft <= 0 &&
+        setLeftButtonVisibility(false);
     }
   };
 
@@ -88,6 +109,12 @@ const ScrollableCarousel = ({
         left: dimensions.width,
         behavior: "smooth",
       });
+
+      isEnd(
+        dimensions.width,
+        dimensions.scrollWidth,
+        scrollableContainerRef.current.scrollLeft
+      ) && setRightButtonVisibility(false);
     }
   };
 
