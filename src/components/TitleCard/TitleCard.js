@@ -12,7 +12,7 @@ const TitleCard = ({ width, height, id, title, imgSrc, CustomContainer }) => {
       {/* Was working version */}
       {/* <ImageWrapper height={height} style={{ backgroundImage: `url(${imgSrc})` }} /> */}
       <ImageWrapper $height={height} $width={width} to={`/title/${id}`}>
-        <Image src={imgSrc} alt={title} />
+        <Image src={imgSrc} alt={title} loading="lazy" />
       </ImageWrapper>
       <Caption>
         <Title to={`/title/${id}`}>{title}</Title>
