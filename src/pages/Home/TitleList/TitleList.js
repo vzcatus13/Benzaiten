@@ -6,6 +6,10 @@ import { TitleCard, TitleCardSkeleton } from "../../../components/TitleCard";
 import { ComponentWrapper, ListCategory, List } from "./TitleList.styled";
 
 const TitleList = ({ listName, data, loading }) => {
+  const cardDimensions = isMobileOnly
+    ? { width: "100px", height: "150px" }
+    : { width: "130px", height: "200px" };
+
   return (
     <ComponentWrapper>
       <ListCategory>{listName}</ListCategory>
@@ -27,11 +31,19 @@ const TitleList = ({ listName, data, loading }) => {
                         .shift()[1]
                     }
                     imgSrc={element.coverImage.large}
+                    height={cardDimensions.height}
+                    width={cardDimensions.width}
                   />
                 );
               })
             : new Array(13).fill().map((_, index) => {
-                return <TitleCardSkeleton key={index} />;
+                return (
+                  <TitleCardSkeleton
+                    key={index}
+                    height={cardDimensions.height}
+                    width={cardDimensions.width}
+                  />
+                );
               })}
         </List>
       </ScrollableCarousel>

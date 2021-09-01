@@ -16,6 +16,10 @@ const Recommendations = ({ data }) => {
     return null;
   }
 
+  const cardDimensions = isMobileOnly
+    ? { width: "100px", height: "150px" }
+    : { width: "130px", height: "200px" };
+
   return (
     <Wrapper>
       <Title>Recommendations</Title>
@@ -37,13 +41,26 @@ const Recommendations = ({ data }) => {
               ];
 
               return (
-                <TitleCard key={id} id={id} title={title} imgSrc={imgSrc} />
+                <TitleCard
+                  key={id}
+                  id={id}
+                  title={title}
+                  imgSrc={imgSrc}
+                  width={cardDimensions.width}
+                  height={cardDimensions.height}
+                />
               );
             })}
 
           {!data &&
             new Array(13).fill().map((_, index) => {
-              return <TitleCardSkeleton key={index} />;
+              return (
+                <TitleCardSkeleton
+                  key={index}
+                  width={cardDimensions.width}
+                  height={cardDimensions.height}
+                />
+              );
             })}
         </List>
       </ScrollableCarousel>
