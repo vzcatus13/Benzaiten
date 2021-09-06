@@ -11,9 +11,28 @@ const client = new ApolloClient({
   link: ApolloLink.from([httpLink]),
   cache: new InMemoryCache({
     typePolicies: {
-      Page: {
-        merge: true,
+      Query: {
+        fields: {
+          Page: {
+            keyArgs: false,
+            merge: true,
+          },
+        },
       },
+
+      Page: {
+        fields: {
+          recommendations: {
+            keyArgs: ["mediaId"],
+
+            merge(existing = [], incoming) {
+              console.log(existing, incoming)
+              return [...existing, ...incoming];
+            },
+          },
+        },
+      },
+
       MediaTitle: {
         merge: true,
       },
