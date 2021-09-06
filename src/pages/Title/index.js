@@ -9,10 +9,7 @@ import Recommendations from "./Recommendations";
 
 import NotFoundPage from "../404";
 
-import {
-  GET_TITLE_BY_ID,
-  GET_RECOMMENDATIONS_BY_ID,
-} from "../../api/anilist-v2";
+import { GET_TITLE_BY_ID } from "../../api/anilist-v2";
 
 const Title = () => {
   const { id } = useParams();
@@ -30,10 +27,6 @@ const Title = () => {
     variables: { id: id },
   });
 
-  const titleRecommendations = useQuery(GET_RECOMMENDATIONS_BY_ID, {
-    variables: { id: id, perPage: 13, page: 1 },
-  });
-
   if (titleInfo.error && titleInfo.error.graphQLErrors[0].status === 404) {
     return <NotFoundPage />;
   }
@@ -42,7 +35,7 @@ const Title = () => {
     <Fragment key={id}>
       <Banner data={titleInfo.data} loading={titleInfo.loading} />
       <LeadingInfo data={titleInfo.data} loading={titleInfo.loading} />
-      <Recommendations data={titleRecommendations.data} />
+      <Recommendations id={id} startingPage={1} perPage={5} />
     </Fragment>
   );
 };
