@@ -1,48 +1,9 @@
 import React, { useEffect } from "react";
-import { useQuery } from "@apollo/client";
 
-import TitleList from "./TitleList";
-
-import { GET_POPULAR_TITLES } from "../../api/anilist-v2";
+import TitleList from "./PopularTitleList";
 
 const Home = () => {
-  const defaultVariables = { perpage: 30 };
-
-  const allPopular = useQuery(GET_POPULAR_TITLES, {
-    variables: { ...defaultVariables },
-  });
-
-  const airingPopular = useQuery(GET_POPULAR_TITLES, {
-    variables: { ...defaultVariables, status: "RELEASING" },
-  });
-
-  const upcommingPopular = useQuery(GET_POPULAR_TITLES, {
-    variables: { ...defaultVariables, status: "NOT_YET_RELEASED" },
-  });
-
-  const comedyPopular = useQuery(GET_POPULAR_TITLES, {
-    variables: { ...defaultVariables, genre: "Comedy" },
-  });
-
-  const scifiPopular = useQuery(GET_POPULAR_TITLES, {
-    variables: { ...defaultVariables, genre: "Sci-Fi" },
-  });
-
-  const sportsPopular = useQuery(GET_POPULAR_TITLES, {
-    variables: { ...defaultVariables, genre: "Sports" },
-  });
-
-  const musicPopular = useQuery(GET_POPULAR_TITLES, {
-    variables: { ...defaultVariables, genre: "Music" },
-  });
-
-  const psychoPopular = useQuery(GET_POPULAR_TITLES, {
-    variables: { ...defaultVariables, genre: "Psychological" },
-  });
-
-  const horrorPopular = useQuery(GET_POPULAR_TITLES, {
-    variables: { ...defaultVariables, genre: "Horror" },
-  });
+  const defaultVariables = { page: 1, perPage: 10 };
 
   useEffect(() => {
     document.title = "Benzaiten";
@@ -52,56 +13,44 @@ const Home = () => {
     <>
       <TitleList
         listName="Top Airing Anime"
-        data={airingPopular.data}
-        loading={airingPopular.loading}
+        variables={{ ...defaultVariables, status: "RELEASING" }}
       />
 
       <TitleList
         listName="Top Upcomming Anime"
-        data={upcommingPopular.data}
-        loading={upcommingPopular.loading}
+        variables={{ ...defaultVariables, status: "NOT_YET_RELEASED" }}
       />
 
-      <TitleList
-        listName="Top Anime"
-        data={allPopular.data}
-        loading={allPopular.loading}
-      />
+      <TitleList listName="Top Anime" variables={{ ...defaultVariables }} />
 
       <TitleList
         listName="Top Anime in Comedy"
-        data={comedyPopular.data}
-        loading={comedyPopular.loading}
+        variables={{ ...defaultVariables, genre: "Comedy" }}
       />
 
       <TitleList
         listName="Top Anime in Sports"
-        data={sportsPopular.data}
-        loading={sportsPopular.loading}
+        variables={{ ...defaultVariables, genre: "Sports" }}
       />
 
       <TitleList
         listName="Top Anime in Music"
-        data={musicPopular.data}
-        loading={musicPopular.loading}
+        variables={{ ...defaultVariables, genre: "Music" }}
       />
 
       <TitleList
         listName="Top Anime in Sci-Fi"
-        data={scifiPopular.data}
-        loading={scifiPopular.loading}
+        variables={{ ...defaultVariables, genre: "Sci-Fi" }}
       />
 
       <TitleList
         listName="Top Anime in Psychological"
-        data={psychoPopular.data}
-        loading={psychoPopular.loading}
+        variables={{ ...defaultVariables, genre: "Psychological" }}
       />
 
       <TitleList
         listName="Top Anime in Horror"
-        data={horrorPopular.data}
-        loading={horrorPopular.loading}
+        variables={{ ...defaultVariables, genre: "Horror" }}
       />
     </>
   );

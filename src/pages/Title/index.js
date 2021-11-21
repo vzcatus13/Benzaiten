@@ -35,7 +35,7 @@ const Title = () => {
     <Fragment key={id}>
       <Banner data={titleInfo.data} loading={titleInfo.loading} />
       <LeadingInfo data={titleInfo.data} loading={titleInfo.loading} />
-      <Recommendations id={id} startingPage={1} perPage={5} />
+      <Recommendations id={id} startingPage={1} perPage={4} />
     </Fragment>
   );
 };

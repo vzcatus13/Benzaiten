@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useRef, useCallback, useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { isMobileOnly } from "react-device-detect";
 
@@ -16,70 +16,84 @@ import { TitleCard, TitleCardSkeleton } from "../../../components/TitleCard";
 import { GET_RECOMMENDATIONS_BY_ID } from "../../../api/anilist-v2";
 
 const Recommendations = ({ id, startingPage, perPage }) => {
-  const scrollableRef = useRef();
-
-  const [recommendationsOptions, setRecommendationsOptions] = useState({
-    nextPage: startingPage,
-    perPage: perPage,
-  });
-
-  const {
-    data: recommendationsList,
-    loading,
-    networkStatus,
-    fetchMore: fetchMoreRecommendations,
-    refetch,
-  } = useQuery(GET_RECOMMENDATIONS_BY_ID, {
-    variables: {
-      id: id,
-      page: recommendationsOptions.nextPage,
-      perPage: recommendationsOptions.perPage,
-    },
-    onCompleted: (data) => {
-      if (data.Page.pageInfo.hasNextPage) {
-        const nextPage = ++recommendationsOptions.nextPage;
-
-        setRecommendationsOptions({
-          nextPage,
-          ...recommendationsOptions,
-        });
-
-        scrollableRef.current &&
-          scrollableRef.current.scrollWidth <=
-            scrollableRef.current.offsetWidth &&
-          fetchMore();
-
-        console.log(perPage, data.Page.pageInfo.hasNextPage, data);
-      }
-    },
-    fetchPolicy: "network-only",
-    nextFetchPolicy: "cache-first",
-    notifyOnNetworkStatusChanged: true,
-  });
-
-  const fetchMore = (page) => {
-    recommendationsList?.Page.pageInfo.hasNextPage &&
-      refetch({
-        variables: {
-          page: page ?? recommendationsOptions.nextPage,
-        },
-      });
-  };
-
-  useEffect(() => {
-    console.log(
-      "page: ",
-      recommendationsOptions.nextPage,
-      ", perPage: ",
-      recommendationsOptions.perPage
-    );
-  }, [recommendationsOptions]);
-
   const cardDimensions = isMobileOnly
     ? { width: "100px", height: "150px" }
     : { width: "130px", height: "200px" };
 
-  if (recommendationsList?.Page.recommendations.length === 0) {
+  const scrollableRef = useRef();
+
+  const [options, setOptions] = useState({
+    page: startingPage,
+    hasNextPage: true,
+  });
+
+  const [recommendationsList, setRecommendationsList] = useState([]);
+
+  const { loading, refetch: fetchMoreRecommendations } = useQuery(
+    GET_RECOMMENDATIONS_BY_ID,
+    {
+      variables: {
+        id: id,
+        page: options.page,
+        perPage: perPage,
+      },
+      onCompleted: (data) => {
+        setRecommendationsList([
+          ...recommendationsList,
+          ...data.Page.recommendations,
+        ]);
+        console.log("completed", data);
+
+        setOptions((options) => {
+          return { ...options, hasNextPage: data.Page.pageInfo.hasNextPage };
+        });
+
+        data.Page.pageInfo.hasNextPage &&
+          scrollableRef.current &&
+          scrollableRef.current.scrollWidth <=
+            scrollableRef.current.offsetWidth &&
+          setOptions((options) => {
+            return { ...options, page: options.page + 1 };
+          });
+      },
+      fetchPolicy: "no-cache",
+      notifyOnNetworkStatusChange: true,
+    }
+  );
+
+  const fetchMore = useCallback(
+    (page) => {
+      options.hasNextPage &&
+        fetchMoreRecommendations({
+          page: page,
+        });
+    },
+    [fetchMoreRecommendations, options.hasNextPage]
+  );
+
+  useEffect(() => {
+    if (options.page === startingPage) return;
+
+    fetchMore(options.page);
+  }, [options.page, startingPage, fetchMore]);
+
+  const infiniteScroll = useCallback(
+    (event) => {
+      if (!options.hasNextPage) return;
+
+      event.target.scrollWidth -
+        event.target.scrollLeft -
+        event.target.offsetWidth <
+        parseInt(cardDimensions.width) / 4 &&
+        !loading &&
+        setOptions((options) => {
+          return { ...options, page: options.page + 1 };
+        });
+    },
+    [loading, cardDimensions.width, options]
+  );
+
+  if (recommendationsList.length === 0 && !loading) {
     return null;
   }
 
@@ -89,52 +103,51 @@ const Recommendations = ({ id, startingPage, perPage }) => {
       <ScrollableCarousel
         CustomButtonLeft={sQButtonLeft}
         CustomButtonRight={sQButtonRight}
-        hideButtons={isMobileOnly || !recommendationsList}
-        disableScroll={!recommendationsList}
+        hideButtons={isMobileOnly || recommendationsList.length === 0}
+        disableScroll={recommendationsList.length === 0}
+        onScroll={infiniteScroll}
         ref={scrollableRef}
       >
         <List>
-          {recommendationsList &&
-            recommendationsList.Page.recommendations.map((element) => {
-              if (!element.mediaRecommendation) return null;
+          {recommendationsList.map((element) => {
+            if (!element.mediaRecommendation) return null;
 
-              const [id, title, imgSrc] = [
-                element.mediaRecommendation.id,
-                element.mediaRecommendation.title.romaji,
-                element.mediaRecommendation.coverImage.large,
-              ];
+            const [id, title, imgSrc] = [
+              element.mediaRecommendation.id,
+              element.mediaRecommendation.title.romaji,
+              element.mediaRecommendation.coverImage.large,
+            ];
 
-              return (
-                <TitleCard
-                  key={id}
-                  id={id}
-                  title={title}
-                  imgSrc={imgSrc}
-                  width={cardDimensions.width}
-                  height={cardDimensions.height}
-                />
-              );
-            })}
+            return (
+              <TitleCard
+                key={id}
+                id={id}
+                title={title}
+                imgSrc={imgSrc}
+                width={cardDimensions.width}
+                height={cardDimensions.height}
+              />
+            );
+          })}
 
-          {!recommendationsList &&
+          {recommendationsList.length === 0 &&
+            loading &&
             new Array(13).fill().map((_, index) => {
               return (
                 <TitleCardSkeleton
-                  key={index}
+                  key={`tcs-${index}`}
                   width={cardDimensions.width}
                   height={cardDimensions.height}
                 />
               );
             })}
 
-          {console.log("net status:", networkStatus)}
-
-          {recommendationsList &&
+          {recommendationsList.length > 0 &&
             loading &&
-            new Array(recommendationsOptions.perPage).fill().map((_, index) => {
+            new Array(perPage).fill().map((_, index) => {
               return (
                 <TitleCardSkeleton
-                  key={index}
+                  key={`tcs-${index}`}
                   width={cardDimensions.width}
                   height={cardDimensions.height}
                 />
@@ -142,14 +155,6 @@ const Recommendations = ({ id, startingPage, perPage }) => {
             })}
         </List>
       </ScrollableCarousel>
-      <button
-        onClick={() => {
-          fetchMore();
-          console.log("fetched from button");
-        }}
-      >
-        Fetch more
-      </button>
     </Wrapper>
   );
 };

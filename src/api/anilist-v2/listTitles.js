@@ -1,8 +1,13 @@
 import { gql } from "@apollo/client";
 
 export const GET_POPULAR_TITLES = gql`
-  query getPopularTitles($perpage: Int!, $status: MediaStatus, $genre: String) {
-    Page(perPage: $perpage) {
+  query getPopularTitles(
+    $page: Int!
+    $perPage: Int!
+    $status: MediaStatus
+    $genre: String
+  ) {
+    Page(perPage: $perPage, page: $page) {
       media(
         sort: POPULARITY_DESC
         status: $status
@@ -24,7 +29,8 @@ export const GET_POPULAR_TITLES = gql`
 
       pageInfo {
         total
-        perPage
+        currentPage
+        hasNextPage
       }
     }
   }
@@ -57,6 +63,8 @@ export const QUERY_TITLES = gql`
   }
 `;
 
+// recommendations gives unexpected duplicates, if fetching in a small (perPage: 3-5) chunks. Problem is on Anilist api
+// perPage: 5, reproduced on titles with id: 100388, 13601, 20623
 export const GET_RECOMMENDATIONS_BY_ID = gql`
   query getRecommendationsById($id: Int!, $perPage: Int!, $page: Int!) {
     Page(perPage: $perPage, page: $page) {
@@ -74,6 +82,7 @@ export const GET_RECOMMENDATIONS_BY_ID = gql`
 
       pageInfo {
         total
+        currentPage
         hasNextPage
       }
     }
